@@ -4,7 +4,7 @@ import better.files.Dsl.SymbolicOperations
 import better.files.File
 import edu.colorado.plv.bounder.BounderUtil
 import edu.colorado.plv.bounder.BounderUtil.{DepthResult, Proven, Timeout, Witnessed, interpretResult}
-import edu.colorado.plv.bounder.ir.{CBEnter, CBExit, CIEnter, CIExit, JimpleFlowdroidWrapper, MessageType}
+import edu.colorado.plv.bounder.ir.{CBEnter, CBExit, CIEnter, CIExit, SootWrapper, MessageType}
 import edu.colorado.plv.bounder.lifestate.LifeState.LSSpec
 import edu.colorado.plv.bounder.lifestate.{FragmentGetActivityNullSpec, LifeState, LifecycleSpec, RxJavaSpec, SAsyncTask, SDialog, SpecSpace, ViewSpec}
 import edu.colorado.plv.bounder.solver.ClassHierarchyConstraints
@@ -90,7 +90,7 @@ class Experiments extends AnyFunSuite with BeforeAndAfter {
 
     val test = (apk:String) => {
 
-      val w = new JimpleFlowdroidWrapper(apk, cgMode,specSet)
+      val w = new SootWrapper(apk, cgMode,specSet)
       val config = SymbolicExecutorConfig(
         stepLimit = 80, w, new SpecSpace(Set()),
         component = Some(List(".*")))
@@ -343,7 +343,7 @@ class Experiments extends AnyFunSuite with BeforeAndAfter {
         assert(apk != null)
         //Note: subscribeIsUnique rule ommitted from this test to check state relevant to callback
         // TODO: relevance could probably be refined so this isn't necessary
-        val w = new JimpleFlowdroidWrapper(apk, cgMode,row1Specs)
+        val w = new SootWrapper(apk, cgMode,row1Specs)
         val config = SymbolicExecutorConfig(
           stepLimit = 80, w, new SpecSpace(row1Specs),
           component = Some(List("com.example.createdestroy.*PlayerFragment.*")))
@@ -463,7 +463,7 @@ class Experiments extends AnyFunSuite with BeforeAndAfter {
         val startTime = System.nanoTime()
         assert(apk != null)
 
-        val w = new JimpleFlowdroidWrapper(apk, cgMode,row2Specs)
+        val w = new SootWrapper(apk, cgMode,row2Specs)
         val specSpace = new SpecSpace(row2Specs, Set(SAsyncTask.disallowDoubleExecute))
         val config = SymbolicExecutorConfig(
           stepLimit = 200, w,specSpace,
@@ -553,7 +553,7 @@ class Experiments extends AnyFunSuite with BeforeAndAfter {
         FragmentGetActivityNullSpec.getActivityNonNull,
         LifecycleSpec.Fragment_activityCreatedOnlyFirst
       ) ++ RxJavaSpec.spec
-      val w = new JimpleFlowdroidWrapper(apk, cgMode, specs)
+      val w = new SootWrapper(apk, cgMode, specs)
       val config = SymbolicExecutorConfig(
         stepLimit = 80, w,new SpecSpace(specs),
         component = Some(List("com.example.createdestroy.*MyFragment.*")))
@@ -657,7 +657,7 @@ class Experiments extends AnyFunSuite with BeforeAndAfter {
         assert(apk != null)
         //Note: subscribeIsUnique rule ommitted from this test to check state relevant to callback
         // TODO: relevance could probably be refined so this isn't necessary
-        val w = new JimpleFlowdroidWrapper(apk, cgMode,row5Specs)
+        val w = new SootWrapper(apk, cgMode,row5Specs)
 
 //        val dbFile = File("yamba_paths.db")
 //
@@ -767,12 +767,12 @@ class Experiments extends AnyFunSuite with BeforeAndAfter {
 
             //            implicit val dbMode = MemoryOutputMode
             //        val specs = new SpecSpace(LifecycleSpec.spec + ViewSpec.clickWhileActive)
-            val w = new JimpleFlowdroidWrapper(apk, cgMode, row4Specs)
+            val w = new SootWrapper(apk, cgMode, row4Specs)
 
             val specSpace = new SpecSpace(row4Specs)
             val config = SymbolicExecutorConfig(
               stepLimit = 2000, w, specSpace,
-              component = Some(List("com.example.createdestroy.MyActivity.*")), outputMode = dbMode)
+              component = Some(List("com.example.createdestroy.MyActivity.*")), outputMode = dbMode, timeLimit = 1800)
             val symbolicExecutor = config.getSymbolicExecutor
             val line = BounderUtil.lineForRegex(".*query1.*".r, src)
 

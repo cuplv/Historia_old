@@ -3,7 +3,7 @@ package edu.colorado.plv.bounder.synthesis
 import better.files.File
 import edu.colorado.plv.bounder.BounderUtil
 import edu.colorado.plv.bounder.BounderUtil.{MultiCallback, Proven, Witnessed}
-import edu.colorado.plv.bounder.ir.{AppLoc, CBEnter, CallbackMethodInvoke, CallbackMethodReturn, JimpleFlowdroidWrapper, LocalWrapper, TestIRMethodLoc}
+import edu.colorado.plv.bounder.ir.{AppLoc, CBEnter, CallbackMethodInvoke, CallbackMethodReturn, SootWrapper, LocalWrapper, TestIRMethodLoc}
 import edu.colorado.plv.bounder.lifestate.LifeState.{And, Exists, LSPred, LSSingle, LSSpec, NS, Once, PredicateSpace, SetSignatureMatcher, SignatureMatcher, UComb}
 import edu.colorado.plv.bounder.lifestate.{FragmentGetActivityNullSpec, LifeState, LifecycleSpec, RxJavaSpec, SpecSignatures, SpecSpace}
 import edu.colorado.plv.bounder.solver.ClassHierarchyConstraints
@@ -114,7 +114,7 @@ class Z3ModelGeneratorTest extends AnyFunSuite {
           FragmentGetActivityNullSpec.getActivityNonNull,
           LifecycleSpec.Fragment_activityCreatedOnlyFirst,
         ) ++ RxJavaSpec.spec
-        val w = new JimpleFlowdroidWrapper(apk, cgMode, specs)
+        val w = new SootWrapper(apk, cgMode, specs)
         val specSpace = new SpecSpace(specs)
         val transfer = (cha: ClassHierarchyConstraints) => new TransferFunctions[SootMethod, soot.Unit](w,
           specSpace, cha)

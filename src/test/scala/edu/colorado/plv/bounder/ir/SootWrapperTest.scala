@@ -12,19 +12,13 @@ import soot.{Scene, SootMethod}
 
 import scala.jdk.CollectionConverters.CollectionHasAsScala
 
-class JimpleFlowdroidWrapperTest extends FixtureAnyFunSuite  {
+class SootWrapperTest extends FixtureAnyFunSuite  {
 
   case class FixtureParam(cgSource: CallGraphSource)
   override def withFixture(test: OneArgTest) = {
-    // Run all tests with both CHA call graph and SparkCallGraph
     withFixture(test.toNoArgTest(FixtureParam(SparkCallGraph)))
-//    withFixture(test.toNoArgTest(FixtureParam(CHACallGraph)))
-//    withFixture(test.toNoArgTest(FixtureParam(FlowdroidCallGraph)))
   }
-  test("Load jimple app"){ f =>
 
-    ???
-  }
 
   test("Call graph picks up basic edge") { f =>
 
@@ -67,7 +61,7 @@ class JimpleFlowdroidWrapperTest extends FixtureAnyFunSuite  {
         RxJavaSpec.call,
         //          RxJavaSpec.subscribeDoesNotReturnNull
       )
-      val w = new JimpleFlowdroidWrapper(apk, f.cgSource, specs)
+      val w = new SootWrapper(apk, f.cgSource, specs)
 //      val transfer = (cha: ClassHierarchyConstraints) => new TransferFunctions[SootMethod, soot.Unit](w,
 //        new SpecSpace(specs), cha)
       val config = SymbolicExecutorConfig(
@@ -161,7 +155,7 @@ class JimpleFlowdroidWrapperTest extends FixtureAnyFunSuite  {
         RxJavaSpec.call,
         //          RxJavaSpec.subscribeDoesNotReturnNull
       )
-      val w = new JimpleFlowdroidWrapper(apk, f.cgSource, specs)
+      val w = new SootWrapper(apk, f.cgSource, specs)
 
 //      val transfer = (cha: ClassHierarchyConstraints) => new TransferFunctions[SootMethod, soot.Unit](w,
 //        new SpecSpace(specs), cha)
@@ -172,14 +166,6 @@ class JimpleFlowdroidWrapperTest extends FixtureAnyFunSuite  {
       // TODO: Compute total methods that can be used as callin or callback in fwk ==== use this in the intro
       val symbEx = config.getSymbolicExecutor
       val resolver = symbEx.appCodeResolver
-      val callinCount = Scene.v().getClasses.asScala.flatMap{c =>
-        val className = c.getName
-        if(resolver.isFrameworkClass(className)){
-          ???
-        }else{
-          ???
-        }
-      }
 
       // Test query building
       val query = Qry.makeReceiverNonNull(config.getSymbolicExecutor, "com.example.createdestroy.MyActivity",

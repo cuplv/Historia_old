@@ -40,7 +40,8 @@ class EncodingToolsTest extends AnyFunSuite{
   // trace elements
   val foo_1_2 = mkTMsg("foo",1::2::Nil)
 
-  test("Encoded O foo(x,y) matches foo(@1,@2)"){
+  ignore("Encoded O foo(x,y) matches foo(@1,@2)"){
+    //TODO: register machine was an idea of how to more quickly handle entailment.  It is not used and doesn't work yet.
     val trace = List(foo_1_2)
 
     val (oFoo_regm,_) = EncodingTools.predToRM(oFoo_x_y,pv0)

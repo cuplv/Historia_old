@@ -2,7 +2,7 @@ package edu.colorado.plv.bounder.symbolicexecutor
 
 import edu.colorado.plv.bounder.BounderUtil
 import edu.colorado.plv.bounder.BounderUtil.{Proven, Witnessed}
-import edu.colorado.plv.bounder.ir.JimpleFlowdroidWrapper
+import edu.colorado.plv.bounder.ir.SootWrapper
 import edu.colorado.plv.bounder.lifestate.LifeState.LSSpec
 import edu.colorado.plv.bounder.lifestate.SpecSpace
 import edu.colorado.plv.bounder.solver.ClassHierarchyConstraints
@@ -80,7 +80,7 @@ class SymbolicExecutorTestSlow extends AnyFunSuite{
       val test: String => Unit = apk => {
         assert(apk != null)
         val specs:Set[LSSpec] = Set()
-        val w = new JimpleFlowdroidWrapper(apk, cgMode, specs)
+        val w = new SootWrapper(apk, cgMode, specs)
         val config = SymbolicExecutorConfig(
           stepLimit = 200, w, new SpecSpace(specs),
           component = Some(List("com.example.createdestroy.MyActivity.*")),

@@ -1,6 +1,6 @@
 import edu.colorado.plv.bounder.BounderUtil
 import edu.colorado.plv.bounder.BounderUtil.{Proven, Witnessed}
-import edu.colorado.plv.bounder.ir.JimpleFlowdroidWrapper
+import edu.colorado.plv.bounder.ir.SootWrapper
 import edu.colorado.plv.bounder.lifestate.LifeState.LSFalse
 import edu.colorado.plv.bounder.lifestate.{LifecycleSpec, FragmentGetActivityNullSpec, RxJavaSpec, SpecSpace}
 import edu.colorado.plv.bounder.solver.ClassHierarchyConstraints
@@ -19,7 +19,7 @@ class RXJavaSubscribe_TestApp extends AnyFunSuite{
       //        RxJavaSpec.subscribeDoesNotReturnNull,
       RxJavaSpec.subscribeIsUnique
     )
-    val w = new JimpleFlowdroidWrapper(apk,CHACallGraph, specs)
+    val w = new SootWrapper(apk,CHACallGraph, specs)
 //    val transfer = (cha:ClassHierarchyConstraints) => new TransferFunctions[SootMethod,soot.Unit](w,
 //      new SpecSpace(specs),cha)
     val config = SymbolicExecutorConfig(

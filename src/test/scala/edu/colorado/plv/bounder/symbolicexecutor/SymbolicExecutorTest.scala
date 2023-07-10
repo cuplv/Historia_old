@@ -3,7 +3,7 @@ package edu.colorado.plv.bounder.symbolicexecutor
 import better.files.File
 import edu.colorado.plv.bounder.BounderUtil
 import edu.colorado.plv.bounder.BounderUtil.{MultiCallback, Proven, SingleCallbackMultiMethod, SingleMethod, Witnessed}
-import edu.colorado.plv.bounder.ir.{JimpleFlowdroidWrapper}
+import edu.colorado.plv.bounder.ir.SootWrapper
 import edu.colorado.plv.bounder.lifestate.LifeState.{And, LSSpec, LSTrue, NS, Not, Once, Or}
 import edu.colorado.plv.bounder.lifestate.{Dummy, FragmentGetActivityNullSpec, LifeState, LifecycleSpec, RxJavaSpec, SAsyncTask, SDialog, SpecSignatures, SpecSpace, ViewSpec}
 import edu.colorado.plv.bounder.solver.ClassHierarchyConstraints
@@ -24,7 +24,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
     val test_interproc_1 = getClass.getResource("/test_interproc_1.apk").getPath
     assert(test_interproc_1 != null)
     val specs:Set[LSSpec] = Set()
-    val w = new JimpleFlowdroidWrapper(test_interproc_1, cgMode,specs)
+    val w = new SootWrapper(test_interproc_1, cgMode,specs)
     val config = SymbolicExecutorConfig(
       stepLimit = 8, w, new SpecSpace(specs), printProgress = true)
     implicit val om: OutputMode = config.outputMode
@@ -44,7 +44,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
   test("Symbolic Executor should prove an inter-callback deref"){
     val test_interproc_1: String = getClass.getResource("/test_interproc_2.apk").getPath
     assert(test_interproc_1 != null)
-    val w = new JimpleFlowdroidWrapper(test_interproc_1, cgMode, LifecycleSpec.spec)
+    val w = new SootWrapper(test_interproc_1, cgMode, LifecycleSpec.spec)
 
     val config = SymbolicExecutorConfig(
       stepLimit = 200, w,new SpecSpace(LifecycleSpec.spec),  z3Timeout = Some(30),
@@ -63,7 +63,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
   test("Symbolic executor should witness onPause"){
     val test_interproc_1: String = getClass.getResource("/test_interproc_2.apk").getPath
     assert(test_interproc_1 != null)
-    val w = new JimpleFlowdroidWrapper(test_interproc_1, cgMode,LifecycleSpec.spec)
+    val w = new SootWrapper(test_interproc_1, cgMode,LifecycleSpec.spec)
     val config = SymbolicExecutorConfig(
       stepLimit = 50, w,new SpecSpace(LifecycleSpec.spec),  z3Timeout = Some(30),
       component = Some(List("com\\.example\\.test_interproc_2\\.MainActivity.*")))
@@ -81,7 +81,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
   test("Symbolic executor should witness onResume"){
     val test_interproc_1: String = getClass.getResource("/test_interproc_2.apk").getPath
     assert(test_interproc_1 != null)
-    val w = new JimpleFlowdroidWrapper(test_interproc_1, cgMode, LifecycleSpec.spec)
+    val w = new SootWrapper(test_interproc_1, cgMode, LifecycleSpec.spec)
     val config = SymbolicExecutorConfig(
       stepLimit = 50, w,new SpecSpace(LifecycleSpec.spec),  z3Timeout = Some(30))
     val symbolicExecutor = config.getSymbolicExecutor
@@ -128,7 +128,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
       val specs = Set(FragmentGetActivityNullSpec.getActivityNull,
         FragmentGetActivityNullSpec.getActivityNonNull,
       ) ++ RxJavaSpec.spec
-      val w = new JimpleFlowdroidWrapper(apk, cgMode, specs)
+      val w = new SootWrapper(apk, cgMode, specs)
       val config = SymbolicExecutorConfig(
         stepLimit = 50, w, new SpecSpace(specs),
         component = Some(List("com.example.createdestroy.MyActivity.*")))
@@ -185,7 +185,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
     val test: String => Unit = apk => {
       assert(apk != null)
       val specs:Set[LSSpec] = Set()
-      val w = new JimpleFlowdroidWrapper(apk, cgMode, specs)
+      val w = new SootWrapper(apk, cgMode, specs)
       val config = SymbolicExecutorConfig(
         stepLimit = 200, w, new SpecSpace(specs),
         component = Some(List("com.example.createdestroy.MyActivity.*")))
@@ -274,7 +274,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
         FragmentGetActivityNullSpec.getActivityNonNull,
         LifecycleSpec.Activity_onPause_onlyafter_onResume
       )
-      val w = new JimpleFlowdroidWrapper(apk, cgMode, specs)
+      val w = new SootWrapper(apk, cgMode, specs)
       val config = SymbolicExecutorConfig(
         stepLimit = 60, w,new SpecSpace(specs),
         component = Some(List("com.example.createdestroy.MyActivity.*")))
@@ -357,7 +357,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
         val specs = Set(FragmentGetActivityNullSpec.getActivityNull,
           FragmentGetActivityNullSpec.getActivityNonNull,
         ) ++ RxJavaSpec.spec
-        val w = new JimpleFlowdroidWrapper(apk, cgMode, specs)
+        val w = new SootWrapper(apk, cgMode, specs)
         val config = SymbolicExecutorConfig(
           stepLimit = 200, w, new SpecSpace(specs),
           component = Some(List("com.example.createdestroy.MyActivity.*")))
@@ -413,7 +413,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
       val specs = Set(FragmentGetActivityNullSpec.getActivityNull,
         FragmentGetActivityNullSpec.getActivityNonNull,
       ) ++ RxJavaSpec.spec
-      val w = new JimpleFlowdroidWrapper(apk, cgMode, specs)
+      val w = new SootWrapper(apk, cgMode, specs)
       val config = SymbolicExecutorConfig(
         stepLimit = 200, w, new SpecSpace(specs),
         component = Some(List("com.example.createdestroy.MyActivity.*")))
@@ -479,7 +479,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
       val specs = Set(FragmentGetActivityNullSpec.getActivityNull,
         FragmentGetActivityNullSpec.getActivityNonNull,
       ) ++ RxJavaSpec.spec
-      val w = new JimpleFlowdroidWrapper(apk, cgMode, specs)
+      val w = new SootWrapper(apk, cgMode, specs)
       val config = SymbolicExecutorConfig(
         stepLimit = 200, w, new SpecSpace(specs),
         component = Some(List("com.example.createdestroy.MyActivity.*")))
@@ -541,7 +541,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
       val specs = Set(FragmentGetActivityNullSpec.getActivityNull,
         FragmentGetActivityNullSpec.getActivityNonNull,
       ) ++ RxJavaSpec.spec
-      val w = new JimpleFlowdroidWrapper(apk, cgMode,specs)
+      val w = new SootWrapper(apk, cgMode,specs)
       val config = SymbolicExecutorConfig(
         stepLimit = 200, w, new SpecSpace(specs),
         component = Some(List("com.example.createdestroy.MyActivity.*")))
@@ -598,7 +598,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
     val test: String => Unit = apk => {
       assert(apk != null)
       val specs:Set[LSSpec] = Set()
-      val w = new JimpleFlowdroidWrapper(apk, cgMode, specs)
+      val w = new SootWrapper(apk, cgMode, specs)
       val config = SymbolicExecutorConfig(
         stepLimit = 50, w, new SpecSpace(specs),
         component = Some(List("com.example.createdestroy.MyActivity.*")))
@@ -673,7 +673,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
         val specs = Set(FragmentGetActivityNullSpec.getActivityNull,
           FragmentGetActivityNullSpec.getActivityNonNull,
         ) ++ RxJavaSpec.spec
-        val w = new JimpleFlowdroidWrapper(apk, cgMode,specs)
+        val w = new SootWrapper(apk, cgMode,specs)
         val config = SymbolicExecutorConfig(
           stepLimit = 200, w,new SpecSpace(specs),
           component = Some(List("com.example.createdestroy.MyActivity.*")))
@@ -753,7 +753,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
       val test: String => Unit = apk => {
         assert(apk != null)
         val specs:Set[LSSpec] = Set()
-        val w = new JimpleFlowdroidWrapper(apk, cgMode,specs)
+        val w = new SootWrapper(apk, cgMode,specs)
         val config = SymbolicExecutorConfig(
           stepLimit = 200, w, new SpecSpace(specs),
           component = Some(List("com.example.createdestroy.MyActivity.*")))
@@ -823,7 +823,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
       val specs = Set(FragmentGetActivityNullSpec.getActivityNull,
         FragmentGetActivityNullSpec.getActivityNonNull,
       ) ++ RxJavaSpec.spec
-      val w = new JimpleFlowdroidWrapper(apk, cgMode, specs)
+      val w = new SootWrapper(apk, cgMode, specs)
       val config = SymbolicExecutorConfig(
         stepLimit = 120, w, new SpecSpace(specs),
         component = Some(List("com.example.createdestroy.MyActivity.*")))
@@ -883,7 +883,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
       val test: String => Unit = apk => {
         assert(apk != null)
         val specs:Set[LSSpec] = Set()
-        val w = new JimpleFlowdroidWrapper(apk, cgMode, specs)
+        val w = new SootWrapper(apk, cgMode, specs)
         val config = SymbolicExecutorConfig(
           stepLimit = 200, w, new SpecSpace(specs),
           component = Some(List("com.example.createdestroy.MyActivity.*")))
@@ -956,7 +956,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
       val specs = Set(FragmentGetActivityNullSpec.getActivityNull,
         FragmentGetActivityNullSpec.getActivityNonNull,
       ) ++ LifecycleSpec.spec ++ RxJavaSpec.spec
-      val w = new JimpleFlowdroidWrapper(apk, cgMode, specs)
+      val w = new SootWrapper(apk, cgMode, specs)
       val specSpace = new SpecSpace(specs)
 
       File.usingTemporaryDirectory() { tmpDir =>
@@ -1025,7 +1025,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
         FragmentGetActivityNullSpec.getActivityNonNull,
         LifecycleSpec.Fragment_activityCreatedOnlyFirst
       ) ++ RxJavaSpec.spec
-      val w = new JimpleFlowdroidWrapper(apk, cgMode, specs)
+      val w = new SootWrapper(apk, cgMode, specs)
 
       val specSpace = new SpecSpace(specs)
       val config = SymbolicExecutorConfig(
@@ -1111,7 +1111,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
         FragmentGetActivityNullSpec.getActivityNonNull,
         LifecycleSpec.Fragment_activityCreatedOnlyFirst
       ) ++ RxJavaSpec.spec
-      val w = new JimpleFlowdroidWrapper(apk, cgMode,specs)
+      val w = new SootWrapper(apk, cgMode,specs)
       val specSpace = new SpecSpace(specs)
       val config = SymbolicExecutorConfig(
         stepLimit = 300, w, specSpace,
@@ -1197,7 +1197,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
         FragmentGetActivityNullSpec.getActivityNonNull,
         LifecycleSpec.Fragment_activityCreatedOnlyFirst
       ) ++ RxJavaSpec.spec
-      val w = new JimpleFlowdroidWrapper(apk, cgMode,specs)
+      val w = new SootWrapper(apk, cgMode,specs)
       val specSpace = new SpecSpace(specs)
       val config = SymbolicExecutorConfig(
         stepLimit = 300, w, specSpace,
@@ -1285,7 +1285,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
         FragmentGetActivityNullSpec.getActivityNonNull,
         LifecycleSpec.Fragment_activityCreatedOnlyFirst,
       ) ++ RxJavaSpec.spec
-      val w = new JimpleFlowdroidWrapper(apk, cgMode, specs)
+      val w = new SootWrapper(apk, cgMode, specs)
       val specSpace = new SpecSpace(specs)
       val config = SymbolicExecutorConfig(
         stepLimit = 300, w, specSpace,
@@ -1401,7 +1401,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
           FragmentGetActivityNullSpec.getActivityNonNull,
           LifecycleSpec.Fragment_activityCreatedOnlyFirst,
         ) ++ RxJavaSpec.spec
-        val w = new JimpleFlowdroidWrapper(apk, cgMode, specs)
+        val w = new SootWrapper(apk, cgMode, specs)
         val specSpace = new SpecSpace(specs)
         val transfer = (cha: ClassHierarchyConstraints) => new TransferFunctions[SootMethod, soot.Unit](w,
           specSpace, cha)
@@ -1513,7 +1513,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
           LSSpec(a::Nil, Nil, Not(SpecSignatures.Activity_onCreate_entry),SpecSignatures.Activity_onCreate_entry),
           RxJavaSpec.call
         ) // ++ Dummy.specs
-        val w = new JimpleFlowdroidWrapper(apk, cgMode,specs)
+        val w = new SootWrapper(apk, cgMode,specs)
         val config = SymbolicExecutorConfig(
           stepLimit = 180, w, new SpecSpace(specs),
           component = Some(List("com.example.createdestroy.*MyActivity.*")))
@@ -1597,7 +1597,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
             ViewSpec.clickWhileActive
 //            LifecycleSpec.Activity_createdOnlyFirst
           )
-          val w = new JimpleFlowdroidWrapper(apk, cgMode,specs)
+          val w = new SootWrapper(apk, cgMode,specs)
           val config = SymbolicExecutorConfig(
             stepLimit = 200, w, new SpecSpace(specs, Set()),
             component = Some(List("com.example.createdestroy.*RemoverActivity.*")))
@@ -1674,7 +1674,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
     val test: String => Unit = apk => {
       assert(apk != null)
       val specs = Set[LSSpec]()
-      val w = new JimpleFlowdroidWrapper(apk, cgMode, specs)
+      val w = new SootWrapper(apk, cgMode, specs)
       val config = SymbolicExecutorConfig(
         stepLimit = 80, w, new SpecSpace(specs),
         component = Some(List("com.example.createdestroy.*MyFragment.*")))
@@ -1751,7 +1751,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
         FragmentGetActivityNullSpec.getActivityNonNull,
         LifecycleSpec.Fragment_activityCreatedOnlyFirst
       ) ++ RxJavaSpec.spec
-      val w = new JimpleFlowdroidWrapper(apk, cgMode, specs)
+      val w = new SootWrapper(apk, cgMode, specs)
       val config = SymbolicExecutorConfig(
         stepLimit = 80, w, new SpecSpace(specs),
         component = Some(List("com.example.createdestroy.*MyFragment.*")))
@@ -1830,7 +1830,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
         FragmentGetActivityNullSpec.getActivityNonNull,
         LifecycleSpec.Fragment_activityCreatedOnlyFirst
       ) ++ RxJavaSpec.spec
-      val w = new JimpleFlowdroidWrapper(apk, cgMode, specs)
+      val w = new SootWrapper(apk, cgMode, specs)
       val config = SymbolicExecutorConfig(
         stepLimit = 80, w, new SpecSpace(specs),
         component = Some(List("com.example.createdestroy.*MyFragment.*")))
@@ -1906,7 +1906,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
         FragmentGetActivityNullSpec.getActivityNonNull,
         LifecycleSpec.Fragment_activityCreatedOnlyFirst
       ) ++ RxJavaSpec.spec
-      val w = new JimpleFlowdroidWrapper(apk, cgMode, specs)
+      val w = new SootWrapper(apk, cgMode, specs)
       val config = SymbolicExecutorConfig(
         stepLimit = 80, w, new SpecSpace(specs),
         component = Some(List("com.example.createdestroy.*MyFragment.*")))
@@ -1958,7 +1958,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
     val test: String => Unit = apk => {
       assert(apk != null)
       val specs = LifecycleSpec.spec
-      val w = new JimpleFlowdroidWrapper(apk, cgMode, specs)
+      val w = new SootWrapper(apk, cgMode, specs)
 
       val config = SymbolicExecutorConfig(
         stepLimit = 120, w, new SpecSpace(specs),
@@ -2006,7 +2006,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
         dbMode.startMeta()
         assert(apk != null)
         val specs = new SpecSpace(LifecycleSpec.spec + ViewSpec.clickWhileActive)
-        val w = new JimpleFlowdroidWrapper(apk, cgMode, specs.getSpecs)
+        val w = new SootWrapper(apk, cgMode, specs.getSpecs)
 
         val config = SymbolicExecutorConfig(
           stepLimit = 200, w, specs,
@@ -2076,7 +2076,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
         implicit val dbMode = DBOutputMode((tmpDir / "paths.db").toString)
         dbMode.startMeta()
         val specs = new SpecSpace(Set(ViewSpec.clickWhileActive, ViewSpec.viewOnlyReturnedFromOneActivity))
-        val w = new JimpleFlowdroidWrapper(apk, cgMode, specs.getSpecs)
+        val w = new SootWrapper(apk, cgMode, specs.getSpecs)
 
         val config = SymbolicExecutorConfig(
           stepLimit = 200, w, specs,
@@ -2133,7 +2133,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
         val specs = new SpecSpace( Set(ViewSpec.clickWhileActive,
            ViewSpec.viewOnlyReturnedFromOneActivity))
 //        val specs = new SpecSpace(Set(ViewSpec.clickWhileActive))
-        val w = new JimpleFlowdroidWrapper(apk, cgMode, specs.getSpecs)
+        val w = new SootWrapper(apk, cgMode, specs.getSpecs)
 
         val config = SymbolicExecutorConfig(
           stepLimit = 180, w, specs,
@@ -2164,102 +2164,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
     }
     makeApkWithSources(Map("MyActivity.java"->src), MkApk.RXBase, test)
   }
-  ignore("Should attach click to Activity2") {
-    //Click attached to different activity
-    //TODO: ====================== uncomment extra pieces and un-ignore this test
-    val src = """package com.example.createdestroy;
-                |import androidx.appcompat.app.AppCompatActivity;
-                |import android.os.Bundle;
-                |import android.util.Log;
-                |import android.view.View;
-                |import android.os.Handler;
-                |import android.view.View.OnClickListener;
-                |
-                |
-                |public class MyActivity extends AppCompatActivity {
-                |    String s = null;
-                |    static OnClickListener listener2 = null;
-                |    @Override
-                |    protected void onResume(){
-                |        View v = findViewById(3);
-                |        s = "";
-                |        OnClickListener listener1 = new OnClickListener(){
-                |             @Override
-                |             public void onClick(View v){
-                |               //View view2 = MyActivity.this.findViewById(4);
-                |               //view2.setOnClickListener(listener2);
-                |               s.toString(); // query1
-                |               // listener2 = new OnClickListener(){ //TODO: uncomment?
-                |               //   @Override
-                |               //   public void onClick(View v){
-                |               //      s.toString(); // query2 can throw null pointer exception
-                |               //   }
-                |               // };
-                |
-                |
-                |             }
-                |          };
-                |        v.setOnClickListener(listener1);
-                |        //View view2 = findViewById(4);
-                |        //view2.setOnClickListener(listener2);
-                |    }
-                |
-                |    @Override
-                |    protected void onPause() {
-                |        s = null;
-                |
-                |    }
-                |}""".stripMargin
-    val test: String => Unit = apk => {
-      File.usingTemporaryDirectory() { tmpDir =>
-        assert(apk != null)
-        implicit val dbMode = DBOutputMode((tmpDir / "paths.db").toString)
-        dbMode.startMeta()
-        //        implicit val dbMode = MemoryOutputMode
-        // LifecycleSpec.spec +
-        val specs = new SpecSpace( Set(ViewSpec.clickWhileActive, ViewSpec.viewOnlyReturnedFromOneActivity))
-        // + ViewSpec.noDupeFindView) //TODO: =====================  add noDupe back in if other tests use it
-        //        val specs = new SpecSpace(Set(ViewSpec.clickWhileActive))
-        val w = new JimpleFlowdroidWrapper(apk, cgMode, specs.getSpecs)
 
-        val config = SymbolicExecutorConfig(
-          stepLimit = 180, w, specs,
-          component = Some(List("com.example.createdestroy.MyActivity.*")), outputMode = dbMode)
-        val symbolicExecutor = config.getSymbolicExecutor
-        val line = BounderUtil.lineForRegex(".*query1.*".r, src)
-        val clickMethodReachable = Reachable("com.example.createdestroy.MyActivity$1",
-          "void onClick(android.view.View)", line)
-
-        val resultClickReachable = symbolicExecutor.run(clickMethodReachable, dbMode)
-          .flatMap(a => a.terminals)
-        // prettyPrinting.dumpDebugInfo(resultClickReachable, "clickReachable")
-        assert(resultClickReachable.nonEmpty)
-        BounderUtil.throwIfStackTrace(resultClickReachable)
-        assert(BounderUtil.interpretResult(resultClickReachable, QueryFinished) == Witnessed)
-
-        val nullUnreach = ReceiverNonNull("com.example.createdestroy.MyActivity$1",
-          "void onClick(android.view.View)",line, Some(".*toString.*"))
-        val nullUnreachRes = symbolicExecutor.run(nullUnreach, dbMode).flatMap(a => a.terminals) // TODO: Slow
-        // prettyPrinting.dumpDebugInfo(nullUnreachRes, "clickNullUnreachable")
-        println("Witness Null")
-        // prettyPrinting.printWitness(nullUnreachRes)
-        assert(nullUnreachRes.nonEmpty)
-        BounderUtil.throwIfStackTrace(nullUnreachRes)
-        assert(BounderUtil.interpretResult(nullUnreachRes, QueryFinished) == Proven)
-
-        //TODO: uncomment
-        //        val line2 = BounderUtil.lineForRegex(".*query2.*".r, src)
-        //        val nullReach = ReceiverNonNull("com.example.createdestroy.MyActivity$1$1",
-        //          "void onClick(android.view.View)", line2, Some(".*toString.*"))
-        //        val nullReachRes = symbolicExecutor.run(nullReach,dbMode).flatMap(a => a.terminals)
-        //        prettyPrinting.dumpDebugInfo(nullReachRes, "clickNullReach")
-        //        BounderUtil.throwIfStackTrace(nullReachRes)
-        //        assert(BounderUtil.interpretResult(nullReachRes, QueryFinished) == Witnessed)
-      }
-
-    }
-    makeApkWithSources(Map("MyActivity.java"->src), MkApk.RXBase, test)
-  }
   test("Finish allows click after pause") {
     List(
       ("", Proven),
@@ -2317,7 +2222,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
 //              LifecycleSpec.noResumeWhileFinish,
 //              LifecycleSpec.Activity_onResume_first_orAfter_onPause //TODO: ==== testing if this prevents timeout
             ) ++ Dummy.specs) // ++ LifecycleSpec.spec)
-            val w = new JimpleFlowdroidWrapper(apk, cgMode, specs.getSpecs)
+            val w = new SootWrapper(apk, cgMode, specs.getSpecs)
 
             val config = SymbolicExecutorConfig(
               stepLimit = 280, w, specs,
@@ -2386,7 +2291,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
     val test: String => Unit = apk => {
       assert(apk != null)
       val specs = new SpecSpace(Set() /*LifecycleSpec.spec*/ , Set(ViewSpec.disallowCallinAfterActivityPause))
-      val w = new JimpleFlowdroidWrapper(apk, cgMode, specs.getSpecs)
+      val w = new SootWrapper(apk, cgMode, specs.getSpecs)
 
       val config = SymbolicExecutorConfig(
         stepLimit = 120, w, specs,
@@ -2462,7 +2367,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
           LifecycleSpec.Activity_onResume_first_orAfter_onPause,
           LifecycleSpec.Activity_onPause_onlyafter_onResume
         ))
-        val w = new JimpleFlowdroidWrapper(apk, cgMode, specs.getSpecs)
+        val w = new SootWrapper(apk, cgMode, specs.getSpecs)
 
         val config = SymbolicExecutorConfig(
           stepLimit = 300, w, specs,
@@ -2538,7 +2443,7 @@ class SymbolicExecutorTest extends AnyFunSuite {
     val test: String => Unit = apk => {
       assert(apk != null)
       val specs = new SpecSpace(Set() /*LifecycleSpec.spec*/ , Set(ViewSpec.disallowCallinAfterActivityPause))
-      val w = new JimpleFlowdroidWrapper(apk, cgMode, specs.getSpecs)
+      val w = new SootWrapper(apk, cgMode, specs.getSpecs)
 
       val config = SymbolicExecutorConfig(
         stepLimit = 120, w, specs,
