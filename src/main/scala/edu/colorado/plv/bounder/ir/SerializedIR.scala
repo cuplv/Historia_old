@@ -58,7 +58,12 @@ class TestIR(transitions: Set[TestTransition]) extends IRWrapper[String,String] 
 
   override def getThisVar(methodLoc: Loc): Option[LocalWrapper] = None
 
-  override def getThisVar(methodLoc: MethodLoc): Option[LocalWrapper] = ???
+  override def getThisVar(methodLoc: MethodLoc): Option[LocalWrapper] = {
+    if(methodLoc.isStatic)
+      None
+    else
+      Some(LocalWrapper("@this", "java.lang.Object"))
+  }
 
   override def getClassHierarchyConstraints: ClassHierarchyConstraints = ???
 
@@ -92,7 +97,8 @@ case class TestIRMethodLoc(clazz:String, name:String, args:List[Option[LocalWrap
     case None => None
   }
 
-  override def isStatic: Boolean = ???
+  override def isStatic: Boolean =
+    false
 
   override def isInterface: Boolean = ???
 

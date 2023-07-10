@@ -49,7 +49,7 @@ object AbstractTrace{
   implicit var rw:RW[AbstractTrace] = macroRW[AbstractTrace]
   //got rid of lspred in abstract trace TODO: remove below
   @deprecated
-  def apply(a:LSPred, rightOfArrow:List[LSSingle], modelVars: Map[Any,PureExpr]):AbstractTrace = ???
+  def apply(a:LSPred, rightOfArrow:List[LSSingle], modelVars: Map[Any,PureExpr]):AbstractTrace = AbstractTrace(rightOfArrow)
   // def apply(rightOfArrow:List[LSSingle], modelVars:Map[String,PureExpr]):AbstractTrace = ???
 }
 

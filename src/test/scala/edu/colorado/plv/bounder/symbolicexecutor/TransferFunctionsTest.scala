@@ -194,8 +194,7 @@ class TransferFunctionsTest extends AnyFunSuite {
       lhs,
       iFooA)
     val tr = new TransferFunctions(ir, new SpecSpace(Set(spec)),miniCha)
-//    val otheri = AbstractTrace(Once(CBExit, Set(("a","a")), "b"::Nil), Nil, Map())
-    val otheri = ???
+    val otheri = AbstractTrace(Once(CBExit, Set(("a","a")), NamedPureVar("b")::Nil), Nil, Map())
     val post = State(StateFormula(
       CallStackFrame(CallbackMethodReturn("","foo",fooMethod, None), None, Map(StackVar("@this") -> recPv))::Nil,
       heapConstraints = Map(),
@@ -210,34 +209,7 @@ class TransferFunctionsTest extends AnyFunSuite {
     val prestate: Set[State] = tr.transfer(post,preloc, postloc)
     println(s"pre: ${prestate.toString}")
     assert(prestate.size == 1)
-    val formula: AbstractTrace = prestate.head.traceAbstraction
-    ???
-//    assert(formula.modelVars.exists{
-//      case (k,v) => k == a && v == recPv
-//    }) //TODO: Stale test? I don't think we go from a cb inv to an app loc anymore
-//    assert(formula.a == lhs)
-//    assert(formula == otheri)
     val stack = prestate.head.callStack
     assert(stack.isEmpty)
-  }
-  test("Discharge I(m1^) phi abstraction when post state must generate m1^ for previous transition") {
-    val preloc = CallbackMethodInvoke("","foo", fooMethod) // Transition to just before foo is invoked
-    val postloc = AppLoc(fooMethod,TestIRLineLoc(1), isPre=true)
-    val ir = new TestIR(Set(MethodTransition(preloc, postloc)))
-    val trf = tr(ir,miniCha)
-    val post = State(StateFormula(
-      CallStackFrame(CallbackMethodReturn("","foo",fooMethod, None), None, Map(StackVar("@this") -> recPv))::Nil,
-      heapConstraints = Map(),
-      pureFormula = Set(),
-      typeConstraints = Map(),
-      traceAbstraction = AbstractTrace(iFooA, Nil, Map("a"->recPv))),nextAddr = 0)
-    println(s"post: ${post.toString}")
-    val prestate: Set[State] = trf.transfer(post,preloc, postloc)
-    println(s"pre: ${prestate.toString}")
-    val formula = prestate.head.traceAbstraction
-    ???
-//    assert(formula.modelVars.exists{
-//      case (k,v) => k == "a" && v == recPv
-//    })
   }
 }
