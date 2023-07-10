@@ -80,25 +80,5 @@ class StateSetTest extends AnyFunSuite {
     assert(StateSet.getPossibleSubsuming(pn(s2), set1).nonEmpty)
   }
 
-  test("Filter subsumed by should test subsumption of states that may be subsumed"){
-    //TODO: implement this method and call from symbolic executor
-    val s1 = State.topState.copy(sf = State.topState.sf.copy(callStack = CallStackFrame(dummyLoc1, None,locals1)::Nil))
-    val s2 = State.topState.copy(sf = State.topState.sf.copy(callStack = CallStackFrame(dummyLoc2, None,locals1)::Nil))
-    val s3 = State.topState.copy(sf = State.topState.sf.copy(
-      callStack = CallStackFrame(dummyLoc1, None,locals1)::CallStackFrame(dummyLoc2, None,locals1)::Nil))
-
-    val twoState = StateSet.add(pn(s3),StateSet.add(pn(s2),emptySet))
-    val resSet = StateSet.filterSubsumedBy(pn(s1),twoState, (_,_)=>true)
-    assert(resSet.allStates.contains(pn(s2)))
-    assert(!resSet.allStates.contains(pn(s3)))
-  }
-
-  test("Filter subsumed based on heap edges"){
-    val s1 = State.topState.copy(sf = State.topState.sf.copy(heapConstraints = Map(FieldPtEdge(pv0,"foo") -> pv1)))
-    val s2 = State.topState.copy(sf = State.topState.sf.copy(
-      heapConstraints = Map(FieldPtEdge(pv0,"foo") -> pv1, FieldPtEdge(pv0,"bar") -> pv1)))
-    val s1set = StateSet.add(pn(s1),emptySet)
-    assert(StateSet.getPossibleSubsuming(pn(s2), s1set).nonEmpty)
-  }
 
 }

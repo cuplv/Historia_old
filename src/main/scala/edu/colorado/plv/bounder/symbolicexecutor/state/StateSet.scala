@@ -116,10 +116,6 @@ object StateSet {
     iFind(edges, pathNode, stateSet.asInstanceOf[IStateSetNode])
   }
 
-  def filterSubsumedBy(pathNode: IPathNode, stateSet: StateSetNode, canSubsume: (State,State)=>Boolean):StateSetNode = {
-    ??? //TODO: === remove states subsumed by recently added state
-  }
-
 }
 
 sealed trait SubsumableLocation
